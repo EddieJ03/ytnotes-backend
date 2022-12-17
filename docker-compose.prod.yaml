@@ -9,11 +9,11 @@ services:
       args: 
         NODE_ENV: production
     environment:
-      - NODE_ENV=${NODE_ENV}
-      - MONGO_USER=${MONGO_USER}
-      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - NODE_ENV=production
+      - MONGO_USER=edward
+      - MONGO_PASSWORD=password
     command: node index.js
   mongo:
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME=edward
+      - MONGO_INITDB_ROOT_PASSWORD=password
