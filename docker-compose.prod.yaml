@@ -4,6 +4,13 @@ services:
     ports:
       - "80:80"
   node-app:
+    deploy:
+      replicas: 8
+      restart_policy:
+        condition: any
+      update_config:
+        parallelism: 2 # number of container to update at a time
+        delay: 15s
     build:
       context: . # location of dockerfile
       args: 
