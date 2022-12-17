@@ -8,6 +8,7 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro # bind mount nginx files
   node-app:
     build: .
+    image: edwj03/ytnotes
     environment:
       - PORT=3000
     depends_on:
