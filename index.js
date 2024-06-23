@@ -38,9 +38,9 @@ const connectWithRetryMongoose = () => {
 connectWithRetryMongoose();
 // connectWithRetryRedis();
 
-// app.get('/api', (req, res) => {
-//     res.send('<h2>Hello World!!!!!!!!!!!!!!!</h2>');
-// });
+app.get('/api', (req, res) => {
+    res.send('<h2>Hello World!!!!!!!!!!!!!!!</h2>');
+});
 
 app.get('/api/notes/:chrome_identity_id/:video_id', (req, res, next) => {
     const { chrome_identity_id, video_id } = req.params;
