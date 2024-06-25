@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const redis = require("redis");
 const port = process.env.PORT || 3000;
 
+// trust the proxy, or nginx
 app.enable("trust proxy");
 
 app.use(require('cors')());

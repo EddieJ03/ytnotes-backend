@@ -5,7 +5,8 @@ services:
     ports:
       - "3000:80"
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro # bind mount nginx files
+      # bind mount nginx config file into nginx container and make it read-only with :'ro'
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro 
   node-app:
     build: .
     image: edwj03/ytnotes
