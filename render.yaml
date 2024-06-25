@@ -1,0 +1,58 @@
+services:
+  - type: web
+    name: nginx
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerCommand: nginx -g 'daemon off;'
+    ports:
+      - containerPort: 80
+    volumes:
+      - path: /etc/nginx/conf.d/default.conf
+        hostPath: ./nginx/default.conf
+        mode: ro
+    deploy:
+      replicas: 1
+      strategy: rolling
+    autoDeploy: true
+    healthCheckPath: /
+
+  - type: web
+    name: node-app
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    buildCommand: docker build --build-arg NODE_ENV=production .
+    startCommand: node index.js
+    environment:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_USER
+        value: edward
+      - key: MONGO_PASSWORD
+        value: password
+    autoDeploy: true
+    healthCheckPath: /
+    instances: 8
+
+  - type: database
+    name: mongo
+    plan: free
+    databaseName: mydb
+    user: edward
+    password: password
+    volumes:
+      - name: mongo-db
+        path: /data/db
+
+  - type: worker
+    name: redis
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    startCommand: redis-server
+    autoDeploy: true
+
+volumes:
+  - name: mongo-db
+    path: /data/db
