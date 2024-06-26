@@ -6,6 +6,4 @@ Right now, this backend is not deployed anywhere because I can't find a free clo
 
 ### Architecture
 
-![architecture-image](image.png)
-
-Credit: https://www.youtube.com/watch?v=9zUHg7xjIqQ&t=4142s&ab_channel=freeCodeCamp.org
+![image](https://github.com/EddieJ03/ytnotes-backend/assets/57547638/48f5d426-c5c0-40ec-a791-2d5d93a4ab79)
