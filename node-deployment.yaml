@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment # Indicates that this resource is a Deployment, which manages a set of replicated Pods.
+metadata:
+  name: nodeapp-deployment
+  labels:
+    app: nodeapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels: # Ensures that only Pods with this label are managed by this Deployment.
+      app: nodeapp 
+  template: # Describes the Pods that will be created by this Deployment
+    metadata:
+      labels:
+        app: nodeapp # creates Pods with label as nodeapp
+    spec:
+      containers:
+      - name: nodeserver
+        image: edwj03/ytnotes:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_PORT
+          value: "27017"
+        - name: MONGO_IP
+          valueFrom:
+            configMapKeyRef:
+              name: mongo-config
+              key: mongo-url
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-user
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongo-secret
+              key: mongo-password
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: redis-config
+              key: redis-url
