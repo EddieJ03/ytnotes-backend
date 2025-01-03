@@ -19,7 +19,9 @@ const redisClient = redis.createClient({
 // redisClient.on('error', (err) => console.log('Redis Client Error', err));
 
 const connectWithRetryMongoose = () => {
-    mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`)
+    mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`, {
+        readPreference: 'secondaryPreferred',
+    })
         .then(() => console.log('Connected to database'))
         .catch((err) => {
             console.log(err);
