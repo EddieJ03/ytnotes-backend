@@ -6,7 +6,7 @@ metadata:
     app: mongo
 spec:
   serviceName: "mongo-service"
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: mongo
