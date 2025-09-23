@@ -22,6 +22,8 @@ spec:
         env:
         - name: MONGO_PORT
           value: "27017"
+        - name: MONGO_URI_REPLICAS
+          value: $MONGO_URI_REPLICAS
         - name: MONGO_IP
           valueFrom:
             configMapKeyRef:

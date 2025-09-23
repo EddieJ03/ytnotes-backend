@@ -6,7 +6,7 @@ metadata:
     app: mongo
 spec:
   serviceName: "mongo-service"
-  replicas: 2
+  replicas: ${REPLICA_COUNT}
   selector:
     matchLabels:
       app: mongo
@@ -18,6 +18,8 @@ spec:
       containers:
       - name: mongo
         image: mongo:5.0
+        command: ["mongod"]
+        args: ["--replSet", "rs0", "--bind_ip_all"]
         ports:
         - containerPort: 27017
         env:
@@ -44,21 +46,3 @@ spec:
       resources:
         requests:
           storage: 1Gi  # Adjust size as needed
-
---- # 3 dash separator to indicate yaml file separation
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongo-service
-spec:
-  ports:
-    - protocol: TCP
-      port: 27017
-      targetPort: 27017
-  # This makes the service headless, which is suited for StatefulSets (stable DNS and direct access from other pods). 
-  # It abstracts away the complexity of other pods needing to directly access the database
-  # (unlike clusterIP which hides set behind a single virtual IP)
-  clusterIP: None  
-  selector:
-    app: mongo

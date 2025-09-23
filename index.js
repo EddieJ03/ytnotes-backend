@@ -1,4 +1,4 @@
-const { MONGO_USER, MONGO_PASSWORD, MONGO_IP, MONGO_PORT, REDIS_URL, REDIS_PORT } = require('./config/config');
+const { MONGO_USER, MONGO_PASSWORD, MONGO_URI_REPLICAS, REDIS_URL, REDIS_PORT } = require('./config/config');
 const Note = require('./models/noteModel');
 
 const app = require('express')();
@@ -16,10 +16,8 @@ const redisClient = redis.createClient({
     port: REDIS_PORT
 });
 
-// redisClient.on('error', (err) => console.log('Redis Client Error', err));
-
 const connectWithRetryMongoose = () => {
-    mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`, {
+    mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URI_REPLICAS}`, {
         readPreference: 'secondaryPreferred',
     })
         .then(() => console.log('Connected to database'))
@@ -41,7 +39,7 @@ const connectWithRetryMongoose = () => {
 connectWithRetryMongoose();
 // connectWithRetryRedis();
 
-app.get('/api', (req, res) => {
+app.get('/', (req, res) => {
     res.send('<h2>Hello World!!!!!!!!!!!!!!!</h2>');
 });
 

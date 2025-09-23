@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  # This makes the service headless, which is suited for StatefulSets (stable DNS and direct access from other pods). 
+  # It abstracts away the complexity of other pods needing to directly access the database
+  # (unlike clusterIP which hides set behind a single virtual IP)
+  clusterIP: None  
+  selector:
+    app: mongo
