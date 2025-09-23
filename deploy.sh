@@ -5,7 +5,7 @@ set -e
 # The number of MongoDB replicas to the first argument passed to the script, or defaults to 3
 export REPLICA_COUNT=${1:-3}
 
-kubectl apply -f mongo-secrets.yaml
+kubectl apply -f ./mongo/mongo-secrets.yaml
 
 # Extract credentials from the secret (single source of truth)
 echo "Extracting MongoDB credentials from secret..."
@@ -33,9 +33,9 @@ export MONGO_URI_REPLICAS="$MONGO_REPLICAS"
 echo "Using $REPLICA_COUNT MongoDB replicas"
 echo "Replica set members: $MEMBERS"
 
-kubectl apply -f mongo-config.yaml
-kubectl apply -f mongo-service.yaml
-envsubst '$REPLICA_COUNT' < mongo-app.yaml | kubectl apply -f -
+kubectl apply -f ./mongo/mongo-config.yaml
+kubectl apply -f ./mongo/mongo-service.yaml
+envsubst '$REPLICA_COUNT' < ./mongo/mongo-app.yaml | kubectl apply -f -
 
 echo "Waiting for all MongoDB pods to be ready..."
 kubectl wait --for=condition=ready pod -l app=mongo --timeout=300s
@@ -147,9 +147,9 @@ EOF
 echo "MongoDB user creation completed on primary: $PRIMARY"
 
 echo "Deploying Redis..."
-kubectl apply -f redis-config.yaml
-kubectl apply -f redis-deployment.yaml
-kubectl apply -f redis-service.yaml
+kubectl apply -f ./redis/redis-config.yaml
+kubectl apply -f ./redis/redis-deployment.yaml
+kubectl apply -f ./redis/redis-service.yaml
 
 echo "Deploying Node.js application..."
 envsubst '$MONGO_URI_REPLICAS' < node-deployment.yaml | kubectl apply -f -

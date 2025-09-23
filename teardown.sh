@@ -9,9 +9,9 @@ kubectl delete deployment nodeapp-deployment --ignore-not-found=true
 kubectl delete -f node-service.yaml --ignore-not-found=true
 
 echo "Deleting Redis..."
-kubectl delete -f redis-deployment.yaml --ignore-not-found=true
-kubectl delete -f redis-service.yaml --ignore-not-found=true
-kubectl delete -f redis-config.yaml --ignore-not-found=true
+kubectl delete -f ./redis/redis-deployment.yaml --ignore-not-found=true
+kubectl delete -f ./redis/redis-service.yaml --ignore-not-found=true
+kubectl delete -f ./redis/redis-config.yaml --ignore-not-found=true
 
 echo "Deleting MongoDB StatefulSet..."
 kubectl delete statefulset mongo-statefulset --ignore-not-found=true --wait=true
@@ -20,9 +20,9 @@ echo "Deleting MongoDB persistent volume claims..."
 kubectl delete pvc -l app=mongo --ignore-not-found=true
 
 echo "Deleting MongoDB service and configs..."
-kubectl delete -f mongo-service.yaml --ignore-not-found=true
-kubectl delete -f mongo-config.yaml --ignore-not-found=true
-kubectl delete -f mongo-secrets.yaml --ignore-not-found=true
+kubectl delete -f ./mongo/mongo-service.yaml --ignore-not-found=true
+kubectl delete -f ./mongo/mongo-config.yaml --ignore-not-found=true
+kubectl delete -f ./mongo/mongo-secrets.yaml --ignore-not-found=true
 
 echo "Verifying cleanup..."
 echo "Remaining pods:"
