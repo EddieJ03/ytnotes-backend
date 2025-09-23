@@ -6,7 +6,7 @@ metadata:
     app: mongo
 spec:
   serviceName: "mongo-service"
-  replicas: ${REPLICA_COUNT}
+  replicas: ${MONGO_REPLICA_COUNT}
   selector:
     matchLabels:
       app: mongo

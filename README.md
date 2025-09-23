@@ -2,10 +2,11 @@
 
 To run on `minikube`: 
 - First start minikube
-- Run the script `deploy.sh`
+- Run the script `deploy.sh <number of mongo pods> <number of Node server pods>`
+    - Both numbers are optional (both default to 3)
 
 To interact with API:
-- Run `minikube service nodeapp-service` to get URL (and make sure to leave this running)
+- Run `minikube service nodeapp-service` to get URL
     - Use the URL with localhost (or `127.0.0.1`)
 
 To teardown:

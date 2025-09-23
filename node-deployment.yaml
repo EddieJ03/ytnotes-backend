@@ -5,7 +5,7 @@ metadata:
   labels:
     app: nodeapp
 spec:
-  replicas: 3
+  replicas: ${SERVER_REPLICA_COUNT}
   selector:
     matchLabels: # Ensures that only Pods with this label are managed by this Deployment.
       app: nodeapp 

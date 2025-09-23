@@ -2,8 +2,11 @@
 
 set -e
 
-# The number of MongoDB replicas to the first argument passed to the script, or defaults to 3
-export REPLICA_COUNT=${1:-3}
+# The number of MongoDB replicas (first argument passed to the script, defaults to 3)
+export MONGO_REPLICA_COUNT=${1:-3}
+
+# The number of Node.js server replicas (second argument passed to the script, defaults to 3)
+export SERVER_REPLICA_COUNT=${2:-3}
 
 kubectl apply -f ./mongo/mongo-secrets.yaml
 
@@ -16,10 +19,10 @@ echo "Using MongoDB credentials from secret: user=${MONGO_USER}"
 
 MONGO_REPLICAS=""
 MEMBERS="["
-for ((i=0; i<$REPLICA_COUNT; i++)); do
+for ((i=0; i<$MONGO_REPLICA_COUNT; i++)); do
   MEMBERS+="{ _id: $i, host: \"mongo-statefulset-$i.mongo-service:27017\" }"
   MONGO_REPLICAS+="mongo-statefulset-$i.mongo-service:27017"
-  if [ $i -lt $((REPLICA_COUNT-1)) ]; then
+  if [ $i -lt $((MONGO_REPLICA_COUNT-1)) ]; then
     MEMBERS+=", "
     MONGO_REPLICAS+=","
   fi
@@ -30,12 +33,12 @@ MONGO_REPLICAS+="/?replicaSet=rs0&authSource=admin"
 export MONGO_RS_MEMBERS="$MEMBERS"
 export MONGO_URI_REPLICAS="$MONGO_REPLICAS"
 
-echo "Using $REPLICA_COUNT MongoDB replicas"
+echo "Using $MONGO_REPLICA_COUNT MongoDB replicas"
 echo "Replica set members: $MEMBERS"
 
 kubectl apply -f ./mongo/mongo-config.yaml
 kubectl apply -f ./mongo/mongo-service.yaml
-envsubst '$REPLICA_COUNT' < ./mongo/mongo-app.yaml | kubectl apply -f -
+envsubst '$MONGO_REPLICA_COUNT' < ./mongo/mongo-app.yaml | kubectl apply -f -
 
 echo "Waiting for all MongoDB pods to be ready..."
 kubectl wait --for=condition=ready pod -l app=mongo --timeout=300s
@@ -44,7 +47,7 @@ echo "Waiting additional 15 seconds for DNS propagation..."
 sleep 15
 
 echo "Verifying MongoDB instances are accessible..."
-for ((i=0; i<$REPLICA_COUNT; i++)); do
+for ((i=0; i<$MONGO_REPLICA_COUNT; i++)); do
   echo "Checking mongo-statefulset-$i..."
   kubectl exec mongo-statefulset-0 -- timeout 10 \
     mongo --host mongo-statefulset-$i.mongo-service:27017 --eval "db.runCommand('ping')" || {
@@ -103,7 +106,7 @@ if [ "$INIT_SUCCESS" != "true" ]; then
     "
   
   # Add other members one by one
-  for ((i=1; i<$REPLICA_COUNT; i++)); do
+  for ((i=1; i<$MONGO_REPLICA_COUNT; i++)); do
     echo "Adding mongo-statefulset-$i to replica set..."
     kubectl exec mongo-statefulset-0 -- \
       mongo --host mongo-statefulset-0.mongo-service --eval "
@@ -152,7 +155,7 @@ kubectl apply -f ./redis/redis-deployment.yaml
 kubectl apply -f ./redis/redis-service.yaml
 
 echo "Deploying Node.js application..."
-envsubst '$MONGO_URI_REPLICAS' < node-deployment.yaml | kubectl apply -f -
+envsubst '$MONGO_URI_REPLICAS $SERVER_REPLICA_COUNT' < node-deployment.yaml | kubectl apply -f -
 kubectl apply -f node-service.yaml
 
 echo "Deployment completed successfully!"
