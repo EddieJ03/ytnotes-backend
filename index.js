@@ -27,17 +27,17 @@ const connectWithRetryMongoose = () => {
         });
 }
 
-// const connectWithRetryRedis = () => {
-//     redisClient.connect()
-//         .then(() => console.log("Successfully connected to redis"))
-//         .catch((err) => {
-//             console.log(err);
-//             setTimeout(connectWithRetryRedis, 5000)
-//         });
-// }
+redisClient.on("error", (err) => {
+  console.error("Redis error:", err);
+});
+redisClient.on('connect', () => {
+    console.log('Redis client connected');
+});
+redisClient.on('ready', () => {
+    console.log('Redis client ready to use');
+});
 
 connectWithRetryMongoose();
-// connectWithRetryRedis();
 
 app.get('/', (req, res) => {
     res.send('<h2>Hello World!!!!!!!!!!!!!!!</h2>');
@@ -46,13 +46,14 @@ app.get('/', (req, res) => {
 app.get('/api/notes/:chrome_identity_id/:video_id', (req, res, next) => {
     const { chrome_identity_id, video_id } = req.params;
 
-    redisClient.get(chrome_identity_id, (err, notes) => {
+    redisClient.get(chrome_identity_id+","+video_id, (err, notes) => {
         if(err) {
             console.log(err);
             throw err;
         }
 
         if(notes !== null) {
+            console.log(`Got notes for chrome ID ${chrome_identity_id} and video ID ${video_id} from cache!`);
             return res.status(200).json(JSON.parse(notes));
         } else {
             Note.find({chrome_identity_id, video_id}, (err, notes) => {
@@ -66,8 +67,8 @@ app.get('/api/notes/:chrome_identity_id/:video_id', (req, res, next) => {
                         console.log(err);
                         throw err;
                     }
-        
-                    console.log("Get notes from cache!");
+
+                    console.log(`Caching notes for chrome ID ${chrome_identity_id} and video ID ${video_id}`);
                 });
         
                 res.status(200).json(notes);
@@ -100,7 +101,7 @@ app.post("/api/notes/:chrome_identity_id/:video_id/:note/:timestamp", (req, res,
                         throw err;
                     }
         
-                    console.log("Added new note to cache!");
+                    console.log(`Added new note for chrome ID ${chrome_identity_id} and video ID ${video_id} to cache!`);
                 });
             }
         });
@@ -137,7 +138,7 @@ app.patch("/api/notes/:chrome_identity_id/:video_id/:text/:timestamp", (req, res
                         throw err;
                     }
         
-                    console.log("Updated note in cache!");
+                    console.log(`Updated note for chrome ID ${chrome_identity_id} and video ID ${video_id} in cache!`);
                 });
             }
         });
@@ -171,7 +172,7 @@ app.delete("/api/notes/:chrome_identity_id/:video_id/:timestamp", (req, res, nex
                         throw err;
                     }
         
-                    console.log("Deleted note in cache!");
+                    console.log(`Deleted note for chrome ID ${chrome_identity_id} and video ID ${video_id} from cache!`);
                 });
             }
         });

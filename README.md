@@ -1,5 +1,7 @@
 # YTNotes Backend
 
+This Kubernetes cluster consists of: a Node.js server, a Redis cache and Mongo replica set.
+
 To run on `minikube`: 
 - First start minikube
 - Run the script `deploy.sh <number of mongo pods> <number of Node server pods>`
@@ -8,6 +10,16 @@ To run on `minikube`:
 To interact with API:
 - Run `minikube service nodeapp-service` to get URL
     - Use the URL with localhost (or `127.0.0.1`)
+
+    - API Endpoints:
+        - GET `/api/notes/:chrome_identity_id/:video_id`
+            - Get all the notes stored for a particular chrome ID and video ID
+        - POST `/api/notes/:chrome_identity_id/:video_id/:text/:timestamp`
+            - Add a new note for a particular chrome ID and video ID 
+        - PATCH `/api/notes/:chrome_identity_id/:video_id/:text/:timestamp`
+            - Update a note for a particular chrome ID and video ID 
+        - DELETE `/api/notes/:chrome_identity_id/:video_id/:text/:timestamp`
+            - Delete a note for a particular chrome ID and video ID 
 
 To teardown:
 - Run the script `teardown.sh`
