@@ -1,6 +1,6 @@
 # YTNotes Backend
 
-This Kubernetes cluster consists of: a Node.js server, a Redis cache and Mongo replica set.
+This Kubernetes cluster consists of the following components: several Node.js servers, a cluster of Redis caches, and a MongoDB replica set.
 
 To run on `minikube`: 
 - First start minikube
