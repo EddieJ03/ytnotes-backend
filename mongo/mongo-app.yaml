@@ -34,10 +34,9 @@ spec:
               name: mongo-secret
               key: mongo-password
         volumeMounts:
-        - name: mongo-data # must match name ins volumeClaimTemplates
+        - name: mongo-data # must match name in volumeClaimTemplates
           mountPath: /data/db
   
-  # volume is unique per pod, but since this is defined as a StatefulSet, data will be synced under the hood by Kubernetes
   volumeClaimTemplates:
   - metadata:
       name: mongo-data
